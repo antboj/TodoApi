@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 using TodoApi.Models;
 
 namespace TodoApi.Controllers
-{
+{   
+    [Produces("application/json")]
     [Route("api/Todo")]
     [ApiController]
     public class TodoController : ControllerBase
@@ -27,7 +28,23 @@ namespace TodoApi.Controllers
         }
 
         // POST: api/Todo
+        /// <remarks>
+        /// Sample request:
+        ///
+        ///     POST /Todo
+        ///     {
+        ///        "id": 1,
+        ///        "name": "Item1",
+        ///        "isComplete": true
+        ///     }
+        ///
+        /// </remarks>
+        /// <response code="201">Returns the newly created item</response>
+        /// <response code="400">If the item is null</response>
+       
         [HttpPost]
+        [ProducesResponseType(201)]
+        [ProducesResponseType(400)]
         public async Task<ActionResult<TodoItem>> PostTodoItem(TodoItem todoItem)
         {
             _context.TodoItems.Add(todoItem);
@@ -74,6 +91,10 @@ namespace TodoApi.Controllers
         }
 
         // DELETE: api/Todo/5
+        /// <summary>
+        /// Deletes a specific TodoItem.
+        /// </summary>
+        /// <param name="id"></param>   
         [HttpDelete("{id}")]
         public async Task<ActionResult<TodoItem>> DeleteTodoItem(long id)
         {
