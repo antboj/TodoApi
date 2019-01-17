@@ -7,6 +7,7 @@ using TodoApi.Models;
 
 namespace TodoApi.Controllers
 {   
+    // Combining routes
     [Produces("application/json")]
     [Route("api/Todo")]
     [ApiController]
