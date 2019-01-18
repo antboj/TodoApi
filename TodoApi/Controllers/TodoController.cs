@@ -29,6 +29,9 @@ namespace TodoApi.Controllers
         }
 
         // POST: api/Todo
+        /// <summary>
+        /// Return all Todo items
+        /// </summary>
         /// <remarks>
         /// Sample request:
         ///
@@ -40,11 +43,10 @@ namespace TodoApi.Controllers
         ///     }
         ///
         /// </remarks>
-        /// <response code="201">Returns the newly created item</response>
-        /// <response code="400">If the item is null</response>
-       
+        /// <response code="200">Upload new Todo item</response>
+        /// <response code="400">Bad request</response>
         [HttpPost]
-        [ProducesResponseType(201)]
+        [ProducesResponseType(200)]
         [ProducesResponseType(400)]
         public async Task<ActionResult<TodoItem>> PostTodoItem(TodoItem todoItem)
         {
@@ -54,6 +56,9 @@ namespace TodoApi.Controllers
             return CreatedAtAction("GetTodoItem", new { id = todoItem.Id }, todoItem);
         }
 
+        /// <summary>
+        /// Return all Todo items
+        /// </summary>
         // GET: api/Todo
         [HttpGet]
         public async Task<ActionResult<IEnumerable<TodoItem>>> GetTodoItems()
@@ -62,6 +67,10 @@ namespace TodoApi.Controllers
             return await _context.TodoItems.ToListAsync();
         }
 
+        /// <summary>
+        /// Return Todo item by ID
+        /// </summary>
+        /// <param name="id"></param>
         // GET: api/Todo/5
         [HttpGet("{id}")]
         public async Task<ActionResult<TodoItem>> GetTodoItem(long id)
@@ -76,6 +85,13 @@ namespace TodoApi.Controllers
             return todoItem;
         }
 
+        /// <summary>
+        /// Update Todo item by ID
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="value"></param>
+        /// <response code="200">If Todo item is updated</response>
+        /// <response code="400">Bad request</response>
         // PUT: api/Todo/5
         [HttpPut("{id}")]
         public async Task<IActionResult> PutTodoItem(long id, TodoItem todoItem)
@@ -93,7 +109,7 @@ namespace TodoApi.Controllers
 
         // DELETE: api/Todo/5
         /// <summary>
-        /// Deletes a specific TodoItem.
+        /// Delete Todo item by ID
         /// </summary>
         /// <param name="id"></param>   
         [HttpDelete("{id}")]
