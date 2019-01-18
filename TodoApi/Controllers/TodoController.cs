@@ -28,6 +28,35 @@ namespace TodoApi.Controllers
             }
         }
 
+        // GET: api/Todo
+        /// <summary>
+        /// Return all Todo items
+        /// </summary>
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<TodoItem>>> GetTodoItems()
+        {
+
+            return await _context.TodoItems.ToListAsync();
+        }
+
+        // GET: api/Todo/5
+        /// <summary>
+        /// Return Todo item by ID
+        /// </summary>
+        /// <param name="id"></param>
+        [HttpGet("{id}")]
+        public async Task<ActionResult<TodoItem>> GetTodoItem(long id)
+        {
+            var todoItem = await _context.TodoItems.FindAsync(id);
+
+            if (todoItem == null)
+            {
+                return NotFound();
+            }
+
+            return todoItem;
+        }
+
         // POST: api/Todo
         /// <summary>
         /// Return all Todo items
@@ -43,10 +72,10 @@ namespace TodoApi.Controllers
         ///     }
         ///
         /// </remarks>
-        /// <response code="200">Upload new Todo item</response>
+        /// <response code="201">Upload new Todo item</response>
         /// <response code="400">Bad request</response>
         [HttpPost]
-        [ProducesResponseType(200)]
+        [ProducesResponseType(201)]
         [ProducesResponseType(400)]
         public async Task<ActionResult<TodoItem>> PostTodoItem(TodoItem todoItem)
         {
@@ -56,43 +85,14 @@ namespace TodoApi.Controllers
             return CreatedAtAction("GetTodoItem", new { id = todoItem.Id }, todoItem);
         }
 
-        /// <summary>
-        /// Return all Todo items
-        /// </summary>
-        // GET: api/Todo
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<TodoItem>>> GetTodoItems()
-        {
-
-            return await _context.TodoItems.ToListAsync();
-        }
-
-        /// <summary>
-        /// Return Todo item by ID
-        /// </summary>
-        /// <param name="id"></param>
-        // GET: api/Todo/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<TodoItem>> GetTodoItem(long id)
-        {
-            var todoItem = await _context.TodoItems.FindAsync(id);
-
-            if (todoItem == null)
-            {
-                return NotFound();
-            }
-
-            return todoItem;
-        }
-
+        // PUT: api/Todo/5
         /// <summary>
         /// Update Todo item by ID
         /// </summary>
         /// <param name="id"></param>
         /// <param name="value"></param>
         /// <response code="200">If Todo item is updated</response>
-        /// <response code="400">Bad request</response>
-        // PUT: api/Todo/5
+        /// <response code="204">No Content</response>
         [HttpPut("{id}")]
         public async Task<IActionResult> PutTodoItem(long id, TodoItem todoItem)
         {
@@ -111,7 +111,9 @@ namespace TodoApi.Controllers
         /// <summary>
         /// Delete Todo item by ID
         /// </summary>
-        /// <param name="id"></param>   
+        /// <param name="id"></param>
+        /// <response code="200">If Todo item is deleted</response>
+        /// <response code="204">No Content</response>
         [HttpDelete("{id}")]
         public async Task<ActionResult<TodoItem>> DeleteTodoItem(long id)
         {
