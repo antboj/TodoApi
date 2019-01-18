@@ -72,8 +72,6 @@ namespace TodoApi.Controllers
         ///     }
         ///
         /// </remarks>
-        /// <response code="201">Upload new Todo item</response>
-        /// <response code="400">Bad request</response>
         [HttpPost]
         [ProducesResponseType(201)]
         [ProducesResponseType(400)]

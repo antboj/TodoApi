@@ -48,8 +48,8 @@ namespace TodoApi.Controllers
         /// </remarks>
         /// <param name="id"></param>
         /// <param name="value"></param>
-        /// <response code="201">Upload new product</response>
-        /// <response code="400">Bad request</response>
+        [ProducesResponseType(201)]
+        [ProducesResponseType(400)]
         [HttpPost("api/Product")]
         public void Post([FromBody]string value)
         {
