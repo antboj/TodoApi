@@ -15,6 +15,7 @@ using TodoApi.Models;
 using Swashbuckle.AspNetCore.Swagger;
 using System.Reflection;
 using System.IO;
+using Newtonsoft.Json;
 
 namespace TodoApi
 {
@@ -23,6 +24,8 @@ namespace TodoApi
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
+
+            
         }
 
         public IConfiguration Configuration { get; }
