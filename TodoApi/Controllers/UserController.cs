@@ -21,6 +21,7 @@ namespace TodoApi.Controllers
             _context = context;
         }
 
+        /*
         // GET api/<controller>/5
         /// <summary>
         /// Return user by ID
@@ -38,7 +39,34 @@ namespace TodoApi.Controllers
 
             return NotFound();
         }
+        */
 
+        // GET api/<controller>/5
+        /// <summary>
+        /// Return user by ID
+        /// </summary>
+        /// <param name="id"></param>
+        [HttpGet("api/User/{id}")]
+        public async Task<ActionResult<IEnumerable<User>>> Get(long id)
+        {
+            var allUsers = await _context.User.ToArrayAsync();
+
+            User[] res = new User[1];
+
+            var userQuery =
+                from user in allUsers
+                where id == user.id
+                select user;
+
+            foreach(var user in userQuery)
+            {
+                res[0] = user;
+            }
+
+            return res;
+        }
+
+        /*
         // GET api/<controller>/Name/Andrej/Bojic
         /// <summary>
         /// Return user by Firstname and Lastname
@@ -59,7 +87,37 @@ namespace TodoApi.Controllers
 
             return NotFound();
         }
+        */
 
+        // GET api/<controller>/Name/Andrej/Bojic
+        /// <summary>
+        /// Return user by Firstname and Lastname
+        /// </summary>
+        /// <param name="first_name"></param>
+        /// <param name="last_name"></param>
+        /// <response code="200">If user is found</response>
+        /// <response code="204">No Content</response>
+        [HttpGet("api/User/Name{first_name}/{last_name}")]
+        public async Task<ActionResult<List<User>>> Name(string first_name, string last_name)
+        {
+            var allUsers = await _context.User.ToArrayAsync();
+
+            List<User> matchUser = new List<User>();
+
+            var userQuery =
+                from user in allUsers
+                where first_name == user.first_name && last_name == user.last_name
+                select user;
+
+            foreach(var user in userQuery)
+            {
+                matchUser.Add(user);
+            }
+
+            return matchUser;
+        }
+
+        /*
         // GET api/<controller>/Email/example@mail.com
         /// <summary>
         /// Return user by Email
@@ -78,6 +136,34 @@ namespace TodoApi.Controllers
             }
 
             return NotFound();
+        }
+        */
+
+        // GET api/<controller>/Email/example@mail.com
+        /// <summary>
+        /// Return user by Email
+        /// </summary>
+        /// <param name="email"></param>
+        /// <response code="200">If user is found</response>
+        /// <response code="204">No Content</response>
+        [HttpGet("api/User/Email{email}")]
+        public async Task<ActionResult<List<User>>> Email(string email)
+        {
+            var allUsers = await _context.User.ToArrayAsync();
+
+            List<User> matchUser = new List<User>();
+
+            var userQuery =
+                from user in allUsers
+                where email == user.email
+                select user;
+
+            foreach (var user in userQuery)
+            {
+                matchUser.Add(user);
+            }
+
+            return matchUser;
         }
 
         // GET api/<controller>/Date/1993-04-27
