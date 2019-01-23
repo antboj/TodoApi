@@ -27,11 +27,11 @@ namespace TodoApi.Models
             return list;
         }*/
 
-        public int id { get; set; }
-        public string first_name { get; set; }
-        public string last_name { get; set; }
-        public DateTime birth_date { get; set; }
-        public string birth_place { get; set; }
-        public string email { get; set; }
+        public int Id { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public DateTime BirthDate { get; set; }
+        public string BirthPlace { get; set; }
+        public string Email { get; set; }
     }
 }
