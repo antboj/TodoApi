@@ -128,7 +128,7 @@ namespace TodoApi.Controllers
         }
 
         // GET: api/<controller>
-        [HttpGet("GetStack")]
+        [HttpGet("GetStack/{number}")]
         // Return true if number is in the stack
         public bool GetStack(int number)
         {
@@ -145,7 +145,7 @@ namespace TodoApi.Controllers
         }
 
         // GET: api/<controller>
-        [HttpGet("GetQueue")]
+        [HttpGet("GetQueue/{name}")]
         // Return true if name is in Queue
         public bool GetQueue(string name)
         {
@@ -161,7 +161,7 @@ namespace TodoApi.Controllers
         }
 
         // GET: api/<controller>
-        [HttpGet("GetHashtable")]
+        [HttpGet("GetHashtable/{value}")]
         // Return true if value is in Hashtable
         public bool GetHashtable(string value)
         {
