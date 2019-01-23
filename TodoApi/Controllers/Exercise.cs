@@ -278,5 +278,27 @@ namespace TodoApi.Controllers
 
             return name;
         }
+
+        // GET: api/<controller>
+        // Return usen name if in dictionary by id(key)
+        [HttpGet("GetDictionaryKeys")]
+        public string GetDictionaryKeys()
+        {
+            string keys = "";
+
+            Dictionary<string, int> users = new Dictionary<string, int>();
+            users["Peter"] = 1;
+            users["Sally"] = 2;
+            users["John"] = 3;
+
+            var userKeys = new List<string>(users.Keys);
+
+            foreach (var key in userKeys)
+            {
+                keys += key;
+            }
+
+            return keys;
+        }
     }
 }
