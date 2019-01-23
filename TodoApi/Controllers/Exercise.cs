@@ -177,6 +177,35 @@ namespace TodoApi.Controllers
             return Status;
         }
 
+        // Return bool 
+        // GET: api/<controller>
+        [HttpGet("GetSerialized")]
+        public bool GetSerialized()
+        {
+            //string path = @"C:\\Users\\bild99\\Desktop\\data.txt";
+
+            string path = Path.GetTempPath() + "data.txt";
+
+            Exercise exercise = new Exercise();
+
+            if (!System.IO.File.Exists(path))
+            {
+                System.IO.File.Create(path);
+
+
+            }
+            string result = JsonConvert.SerializeObject(exercise);
+
+            using (var sw = new StreamWriter(path, true))
+            {
+                sw.WriteLine(result.ToString());
+                sw.Close();
+            }
+
+            Status = true;
+            return Status;
+        }
+
         // GET: api/<controller>
         [HttpGet("GetFile")]
         // Reading all from a file
@@ -199,7 +228,8 @@ namespace TodoApi.Controllers
         // While loop
         public string getStream()
         {
-            string path = @"C:\\Users\\bild99\\source\\repos\\data.txt";
+            //string path = @"C:\\Users\\bild99\\source\\repos\\data.txt";
+            string path = Path.GetTempPath() + "data.txt";
             string data = null;
 
             using (StreamReader sr = System.IO.File.OpenText(path))
@@ -213,31 +243,6 @@ namespace TodoApi.Controllers
 
                 return data;
             }
-        }
-
-        // Return bool 
-        // GET: api/<controller>
-        [HttpGet("GetS")]
-        public bool GetS()
-        {
-            string path = @"C:\\Users\\bild99\\Desktop\\data.txt";
-
-            Exercise exercise = new Exercise();
-
-            if (System.IO.File.Exists(path))
-            {
-                string result = JsonConvert.SerializeObject(exercise);
-
-                using (var sw = new StreamWriter(path, true))
-                {
-                    sw.WriteLine(result.ToString());
-                    sw.Close();
-                }
-
-                Status = true;
-            }
-
-            return Status;
         }
     }
 }
