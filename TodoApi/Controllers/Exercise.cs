@@ -244,5 +244,39 @@ namespace TodoApi.Controllers
                 return data;
             }
         }
+
+        // GET: api/<controller>
+        // Return number of users in dictionary
+        [HttpGet("GetDictionary")]
+        public int GetDictionary()
+        {
+            var users = new Dictionary<int, string>();
+            users.Add(1,"Peter");
+            users.Add(2, "Sally");
+            users.Add(3, "John");
+
+            var userCount = users.Count();
+            return userCount;
+        }
+
+        // GET: api/<controller>
+        // Return usen name if in dictionary by id(key)
+        [HttpGet("GetDictionaryName")]
+        public string GetDictionaryName(int id)
+        {
+            var name = "null";
+
+            var users = new Dictionary<int, string>()
+            {
+                {1, "Sally"}, {2, "Peter"}, {3, "John"}
+            };
+
+            if (users.ContainsKey(id))
+            {
+                name = users[id];
+            }
+
+            return name;
+        }
     }
 }
