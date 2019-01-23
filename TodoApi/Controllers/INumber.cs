@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 
 namespace TodoApi.Controllers
 {
+    // Custom interface
     interface INumber
     {
         void SetNum(int num);

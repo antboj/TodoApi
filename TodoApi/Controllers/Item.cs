@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace TodoApi.Controllers
 {
-    abstract class Item
+    public abstract class Item
     {
         public virtual void Set()
         {
