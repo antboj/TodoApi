@@ -19,11 +19,16 @@ namespace TodoApi.Controllers
         public int Num1 = 20;
         public int Num2 = 15;
         public bool Status = false;
-        //public static List<int> Values;
+        public static List<int> Values;
         public enum Names
         {
             Peter, Sally, John
         }
+
+        public Dictionary<int, int> Numbers = new Dictionary<int, int>()
+        {
+            {1, 1}, {2, 2}
+        };
 
         // GET: api/<controller>
         [HttpGet("GetEnum")]
@@ -184,7 +189,8 @@ namespace TodoApi.Controllers
         {
             //string path = @"C:\\Users\\bild99\\Desktop\\data.txt";
 
-            string path = Path.GetTempPath() + "data.txt";
+            string currentPath = Path.GetTempPath();
+            string path = Path.Combine(currentPath, "data.txt");
 
             Exercise exercise = new Exercise();
 
@@ -211,7 +217,7 @@ namespace TodoApi.Controllers
         // Reading all from a file
         public string GetFile()
         {
-            string path = @"C:\\Users\\bild99\\source\\repos\\data.txt";
+            string path = @"C:\Users\bild99\source\repos\data.txt";
             string data = null;
 
             if (System.IO.File.Exists(path))
@@ -229,7 +235,8 @@ namespace TodoApi.Controllers
         public string getStream()
         {
             //string path = @"C:\\Users\\bild99\\source\\repos\\data.txt";
-            string path = Path.GetTempPath() + "data.txt";
+            string currentPath = Path.GetTempPath();
+            string path = Path.Combine(currentPath, "data.txt");
             string data = null;
 
             using (StreamReader sr = System.IO.File.OpenText(path))
@@ -280,7 +287,7 @@ namespace TodoApi.Controllers
         }
 
         // GET: api/<controller>
-        // Return usen name if in dictionary by id(key)
+        // Return keys
         [HttpGet("GetDictionaryKeys")]
         public string GetDictionaryKeys()
         {
@@ -300,5 +307,121 @@ namespace TodoApi.Controllers
 
             return keys;
         }
+
+        // GetToDictionary Compare method
+        // Return bool
+        private bool Compare(int num)
+        {
+            return num < 17 ? true : false;
+
+        }
+
+        // GET: api/<controller>
+        // Return keys
+        [HttpGet("GetToDictionary")]
+        public Dictionary<int, bool> GetToDictionary()
+        {
+            Dictionary<int, bool> Numbers = new Dictionary<int, bool>();
+
+            int[] numbers = new int[2] {Num1, Num2};
+
+            var result = numbers.ToDictionary(num => num, num => Compare(num));
+
+            foreach (var nums in result)
+            {
+                Numbers.Add(nums.Key, nums.Value);
+            }
+
+            return Numbers;
+        }
+
+        // GET: api/<controller>
+        // Return List of keys
+        [HttpGet("GetDictionaryToListValues")]
+        public List<int> GetDictionaryToListValues()
+        {
+            var users = new Dictionary<string, int>(StringComparer.Ordinal);
+            users.Add("Peter", 1);
+            users.Add("Sally", 2);
+            users.Add("John",  3);
+
+            Values = new List<int>();
+
+            foreach (KeyValuePair<string, int> user in users)
+            {
+                Values.Add(user.Value);
+            }
+
+            return Values;
+        }
+
+        // GET: api/<controller>
+        // Return true if user is deleted
+        [HttpDelete("DeleteDictionaryByKey/{key}")]
+        public bool DeleteDictionaryByKey(int key)
+        {
+            var users = new Dictionary<int, string>()
+            {
+                {1, "Sally"}, {2, "Peter"}, {3, "John"}
+            };
+
+            if (users.ContainsKey(key))
+            {
+                users.Remove(key);
+                Status = true;
+            }
+
+            return Status;
+        }
+
+        // GET: api/<controller>
+        // Return true if user is created
+        [HttpPost("PostNewDictionaryUser/{key}/{name}")]
+        public Dictionary<int, string> PostNewDictionaryUser(int key, string name)
+        {
+            var users = new Dictionary<int, string>();
+            users.Add(1,"Andrej");
+
+            if (!users.ContainsKey(key) && !users.ContainsValue(name))
+            {
+                users.Add(key, name);
+                //Status = true;
+            }
+
+            //return Status;
+            return users;
+        }
+
+        // GET: api/<controller>
+        // Return sum keys
+        [HttpGet("GetDictionarySumKeys")]
+        public int GetDictionarySumKeys()
+        {
+            Dictionary<string, int> users = new Dictionary<string, int>();
+            users["Peter"] = 1;
+            users["Sally"] = 2;
+            users["John"] = 3;
+
+            int sum = 0;
+            var counter = users.GetEnumerator();
+
+            while (counter.MoveNext())
+            {
+                var pair = counter.Current;
+                sum += pair.Value;
+            }
+
+            return sum;
+        }
+
+        // GET: api/<controller>
+        // Return key if exists or 0
+        [HttpGet("GetDictionaryNumber")]
+        public int GetDictionaryNumber(int value)
+        {
+            return Numbers.TryGetValue(value, out int key) ? key : 0;
+        }
+
+
     }
 }
