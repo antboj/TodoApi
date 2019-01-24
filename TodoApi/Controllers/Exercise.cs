@@ -188,7 +188,6 @@ namespace TodoApi.Controllers
         public bool GetSerialized()
         {
             //string path = @"C:\\Users\\bild99\\Desktop\\data.txt";
-
             string currentPath = Path.GetTempPath();
             string path = Path.Combine(currentPath, "data.txt");
 
@@ -334,7 +333,7 @@ namespace TodoApi.Controllers
 
             return Numbers;
         }
-
+        
         // GET: api/<controller>
         // Return List of keys
         [HttpGet("GetDictionaryToListValues")]
@@ -421,7 +420,5 @@ namespace TodoApi.Controllers
         {
             return Numbers.TryGetValue(value, out int key) ? key : 0;
         }
-
-
     }
 }
