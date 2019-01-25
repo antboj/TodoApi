@@ -45,25 +45,74 @@ namespace TodoApi.Controllers
         /// <summary>
         /// Return user by ID
         /// </summary>
-        /// <param name="Id"></param>
-        [HttpGet("api/User/{Id}")]
-        public async Task<ActionResult<IEnumerable<User>>> Get(long id)
+        /// <param name="id"></param>
+        [HttpGet("api/User/GetById{id}")]
+        public IActionResult GetById(int id)
         {
-            var AllUsers = await _context.User.ToArrayAsync();
-
-            User[] Res = new User[1];
+            var AllUsers = _context.User;
 
             var UserQuery =
                 from User in AllUsers
                 where id == User.Id
                 select User;
 
-            foreach(var User in UserQuery)
-            {
-                Res[0] = User;
-            }
+            return Ok(UserQuery.ToList());
+        }
 
-            return Res;
+        // GET api/<controller>/5
+        /// <summary>
+        /// Return all users born at the same year
+        /// </summary>
+        /// <param name="id"></param>
+        [HttpGet("api/User/GetByYear{year}")]
+        public IActionResult GetByYear(int year)
+        {
+            var allUsers = _context.User;
+
+            var userQuery =
+                from user in allUsers
+                where user.BirthDate.Year == year
+                      orderby user.FirstName
+                select new { FirstName = user.FirstName, BirthYear = user.BirthDate};
+
+            return Ok(userQuery.ToList());
+        }
+
+        // GET api/<controller>/5
+        /// <summary>
+        /// Return number of users from same place
+        /// </summary>
+        /// <param name="birthPlace"></param>
+        [HttpGet("api/User/Count/{birthPlace}")]
+        public int Count(string birthPlace)
+        {
+            var allUsers = _context.User;
+
+            var userQuery =
+                (from user in allUsers
+                    where user.BirthPlace == birthPlace
+                    select user).Count();
+
+            var birthPlaceCount = userQuery;
+            return birthPlaceCount;
+        }
+
+        // GET api/<controller>/5
+        /// <summary>
+        /// Return all users of age from same place
+        /// </summary>
+        /// <param name="birthPlace"></param>
+        [HttpGet("api/User/FromPlace/{birthPlace}")]
+        public List<User> OfAgeFromPlace(string birthPlace)
+        {
+            var allUsers = _context.User;
+            
+            var userQuery =
+                from user in allUsers
+                    where user.BirthPlace == birthPlace && (user.BirthDate.Year < (DateTime.Now.Year - 18))
+                    select user;
+
+            return (userQuery).ToList();
         }
 
         /*
@@ -97,7 +146,7 @@ namespace TodoApi.Controllers
         /// <param name="lastName"></param>
         /// <response code="200">If user is found</response>
         /// <response code="204">No Content</response>
-        [HttpGet("api/User/Name{FirstName}/{LastName}")]
+        [HttpGet("api/User/Name{firstName}/{lastName}")]
         public async Task<ActionResult<List<User>>> Name(string firstName, string lastName)
         {
             var AllUsers = await _context.User.ToArrayAsync();
@@ -109,9 +158,9 @@ namespace TodoApi.Controllers
                 where firstName == User.FirstName && lastName == User.LastName
                 select User;
 
-            foreach(var User in UserQuery)
+            foreach(var user in UserQuery)
             {
-                MatchUser.Add(User);
+                MatchUser.Add(user);
             }
 
             return MatchUser;
@@ -146,7 +195,7 @@ namespace TodoApi.Controllers
         /// <param name="email"></param>
         /// <response code="200">If user is found</response>
         /// <response code="204">No Content</response>
-        [HttpGet("api/User/Email{Email}")]
+        [HttpGet("api/User/Email{email}")]
         public async Task<ActionResult<List<User>>> Email(string email)
         {
             var AllUsers = await _context.User.ToArrayAsync();
@@ -166,6 +215,7 @@ namespace TodoApi.Controllers
             return MatchUser;
         }
 
+        /*
         // GET api/<controller>/Date/1993-04-27
         /// <summary>
         /// Return user by Birthdate
@@ -185,7 +235,37 @@ namespace TodoApi.Controllers
 
             return NotFound();
         }
+        */
 
+        // GET api/<controller>/Date/1993-04-27
+        /// <summary>
+        /// Return user by Birthdate
+        /// </summary>
+        /// <param name="birthDate"></param>
+        /// <response code="200">If user is found</response>
+        /// <response code="204">No Content</response>
+        [HttpGet("api/User/Date/{birthDate}")]
+        public async Task<ActionResult<List<User>>> Date(DateTime birthDate)
+        {
+            var AllUsers = await _context.User.ToArrayAsync();
+
+            List<User> MatchUser = new List<User>();
+
+            var UserQuery =
+                from user in AllUsers
+                where birthDate == user.BirthDate
+                select user;
+
+            foreach (var user in UserQuery)
+            {
+                MatchUser.Add(user);
+            }
+
+            return MatchUser;
+
+        }
+
+        /*
         // GET api/<controller>/DatePlace/1993-04-27/Bar
         /// <summary>
         /// Return user by Birthdate and Birthplace
@@ -194,7 +274,7 @@ namespace TodoApi.Controllers
         /// <param name="birthPlace"></param>
         /// <response code="200">If user is found</response>
         /// <response code="204">No Content</response>
-        [HttpGet("api/User/DatePlace/{BirthDate}/{BirthPlace}")]
+        [HttpGet("api/User/DatePlace/{birthDate}/{birthPlace}")]
         public async Task<ActionResult<List<User>>> DatePlace(DateTime birthDate, string birthPlace)
         {
             var User = await _context.User.Where(o => (DateTime.Compare(o.BirthDate, birthDate) == 0) && o.BirthPlace == birthPlace).ToListAsync();
@@ -205,6 +285,35 @@ namespace TodoApi.Controllers
             }
 
             return NotFound();
+        }
+        */
+
+        // GET api/<controller>/DatePlace/1993-04-27/Bar
+        /// <summary>
+        /// Return user by Birthdate and Birthplace
+        /// </summary>
+        /// <param name="birthDate"></param>
+        /// <param name="birthPlace"></param>
+        /// <response code="200">If user is found</response>
+        /// <response code="204">No Content</response>
+        [HttpGet("api/User/DatePlace/{birthDate}/{birthPlace}")]
+        public async Task<ActionResult<List<User>>> DatePlace(DateTime birthDate, string birthPlace)
+        {
+            var AllUsers = await _context.User.ToArrayAsync();
+
+            List<User> MatchUser = new List<User>();
+
+            var UserQuery =
+                from user in AllUsers
+                where birthDate == user.BirthDate && birthPlace == user.BirthPlace
+                select user;
+
+            foreach (var user in UserQuery)
+            {
+                MatchUser.Add(user);
+            }
+
+            return MatchUser;
         }
 
 
@@ -252,21 +361,6 @@ namespace TodoApi.Controllers
 
             return User;
         }
-        
-        /*
-        public async Task<ActionResult<User>> Delete(int id)
-        {
-            var allUsers = await _context.User.ToArrayAsync();
-
-            var userQuery =
-                from user in allUsers
-                where id == user.id
-                select user;
-
-            allUsers.Delete()
-
-        }
-        */
     }
-    }
+}
 

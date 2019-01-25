@@ -14,19 +14,12 @@ namespace TodoApi.Models
         {
             get
             {
-                var jsonString = File.ReadAllText("data.json");
+                var jsonString = File.ReadAllText(@"C:\Program Files\IIS Express\data.json");
                 var list = JsonConvert.DeserializeObject<List<User>>(jsonString);
                 return list;
             }
         }
-
-        /*public static List<User> GetUsers()
-        {
-            var jsonString = File.ReadAllText("data.json");
-            var list = JsonConvert.DeserializeObject<List<User>>(jsonString);
-            return list;
-        }*/
-
+        
         public int Id { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
