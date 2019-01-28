@@ -16,6 +16,7 @@ namespace TodoApi.Models
         }
 
         public DbSet<User> User { get; set; }
+        public DbSet<Job> Job { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -23,6 +24,10 @@ namespace TodoApi.Models
             var jsonString = File.ReadAllText("data.json");
             var list = JsonConvert.DeserializeObject<List<User>>(jsonString);
             modelBuilder.Entity<User>().HasData(list);
+
+            var jsonJobs = File.ReadAllText("jobs.json");
+            var jobsList = JsonConvert.DeserializeObject<List<Job>>(jsonJobs);
+            modelBuilder.Entity<Job>().HasData(jobsList);
         }
 
     }

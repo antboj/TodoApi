@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Remotion.Linq.Clauses;
 using TodoApi.Models;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -46,6 +47,8 @@ namespace TodoApi.Controllers
         /// Return user by ID
         /// </summary>
         /// <param name="id"></param>
+        [ProducesResponseType(200)]
+        [ProducesResponseType(404)]
         [HttpGet("api/User/GetById{id}")]
         public IActionResult GetById(int id)
         {
@@ -56,10 +59,15 @@ namespace TodoApi.Controllers
                 where id == User.Id
                 select User;
 
-            return Ok(UserQuery.ToList());
+            if (UserQuery.Any())
+            {
+                return Ok(UserQuery.ToList());
+            }
+
+            return NotFound();
         }
 
-        // GET api/<controller>/5
+        // GET api/<controller>/1993
         /// <summary>
         /// Return all users born at the same year
         /// </summary>
@@ -78,13 +86,13 @@ namespace TodoApi.Controllers
             return Ok(userQuery.ToList());
         }
 
-        // GET api/<controller>/5
+        // GET api/<controller>/Bar
         /// <summary>
         /// Return number of users from same place
         /// </summary>
         /// <param name="birthPlace"></param>
-        [HttpGet("api/User/Count/{birthPlace}")]
-        public int Count(string birthPlace)
+        [HttpGet("api/User/CountUsers/{birthPlace}")]
+        public IActionResult CountUsers(string birthPlace)
         {
             var allUsers = _context.User;
 
@@ -94,16 +102,22 @@ namespace TodoApi.Controllers
                     select user).Count();
 
             var birthPlaceCount = userQuery;
-            return birthPlaceCount;
+
+            if (birthPlaceCount > 0)
+            {
+                return Ok(birthPlaceCount);
+            }
+
+            return NotFound();
         }
 
-        // GET api/<controller>/5
+        // GET api/<controller>/Bar
         /// <summary>
         /// Return all users of age from same place
         /// </summary>
         /// <param name="birthPlace"></param>
-        [HttpGet("api/User/FromPlace/{birthPlace}")]
-        public List<User> OfAgeFromPlace(string birthPlace)
+        [HttpGet("api/User/OfAgeFromPlace/{birthPlace}")]
+        public IActionResult OfAgeFromPlace(string birthPlace)
         {
             var allUsers = _context.User;
             
@@ -112,7 +126,13 @@ namespace TodoApi.Controllers
                     where user.BirthPlace == birthPlace && (user.BirthDate.Year < (DateTime.Now.Year - 18))
                     select user;
 
-            return (userQuery).ToList();
+            if (userQuery.Any())
+            {
+                return Ok(userQuery.ToList());
+            }
+
+            return NotFound();
+
         }
 
         /*
@@ -144,12 +164,12 @@ namespace TodoApi.Controllers
         /// </summary>
         /// <param name="firstName"></param>
         /// <param name="lastName"></param>
-        /// <response code="200">If user is found</response>
+        /// <response code="200">Success</response>
         /// <response code="204">No Content</response>
         [HttpGet("api/User/Name{firstName}/{lastName}")]
-        public async Task<ActionResult<List<User>>> Name(string firstName, string lastName)
+        public IActionResult Name(string firstName, string lastName)
         {
-            var AllUsers = await _context.User.ToArrayAsync();
+            var AllUsers = _context.User;
 
             List<User> MatchUser = new List<User>();
 
@@ -163,7 +183,12 @@ namespace TodoApi.Controllers
                 MatchUser.Add(user);
             }
 
-            return MatchUser;
+            if (MatchUser.Any())
+            {
+                return Ok(MatchUser);
+            }
+
+            return NotFound();
         }
 
         /*
@@ -196,9 +221,9 @@ namespace TodoApi.Controllers
         /// <response code="200">If user is found</response>
         /// <response code="204">No Content</response>
         [HttpGet("api/User/Email{email}")]
-        public async Task<ActionResult<List<User>>> Email(string email)
+        public List<User> Email(string email)
         {
-            var AllUsers = await _context.User.ToArrayAsync();
+            var AllUsers = _context.User;
 
             List<User> MatchUser = new List<User>();
 
@@ -245,9 +270,9 @@ namespace TodoApi.Controllers
         /// <response code="200">If user is found</response>
         /// <response code="204">No Content</response>
         [HttpGet("api/User/Date/{birthDate}")]
-        public async Task<ActionResult<List<User>>> Date(DateTime birthDate)
+        public List<User> Date(DateTime birthDate)
         {
-            var AllUsers = await _context.User.ToArrayAsync();
+            var AllUsers = _context.User;
 
             List<User> MatchUser = new List<User>();
 
@@ -294,27 +319,110 @@ namespace TodoApi.Controllers
         /// </summary>
         /// <param name="birthDate"></param>
         /// <param name="birthPlace"></param>
-        /// <response code="200">If user is found</response>
+        /// <response code="200">Success</response>
         /// <response code="204">No Content</response>
         [HttpGet("api/User/DatePlace/{birthDate}/{birthPlace}")]
-        public async Task<ActionResult<List<User>>> DatePlace(DateTime birthDate, string birthPlace)
+        public IActionResult DatePlace(DateTime birthDate, string birthPlace)
         {
-            var AllUsers = await _context.User.ToArrayAsync();
-
-            List<User> MatchUser = new List<User>();
+            var AllUsers = _context.User;
 
             var UserQuery =
                 from user in AllUsers
                 where birthDate == user.BirthDate && birthPlace == user.BirthPlace
                 select user;
 
-            foreach (var user in UserQuery)
-            {
-                MatchUser.Add(user);
-            }
-
-            return MatchUser;
+            return Ok(UserQuery.ToList());
         }
+
+        // GET api/<controller>/5
+        /// <summary>
+        /// Return user and his job
+        /// </summary>
+        /// <param name="id"></param>
+        /// <response code="200">Success</response>
+        /// <response code="204">No Content</response>
+        [HttpGet("api/User/UserJob/{id}")]
+        public IActionResult UserJob(int id)
+        {
+            var allUsers = _context.User;
+            var allJobs = _context.Job;
+
+            var userJobQuery =
+                from user in allUsers
+                where user.Id == id
+                join job in allJobs on user.Id equals job.Id
+                select new {Name = user.FirstName, Job = job.Name, Sector = job.Sector};
+
+            return Ok(userJobQuery);
+        }
+
+        // GET api/<controller>/Finance/Menager
+        /// <summary>
+        /// Return all users thst work the sam job
+        /// </summary>
+        /// <param name="sector"></param>
+        /// <param name="position"></param>
+        /// <response code="200">Success</response>
+        /// <response code="204">No Content</response>
+        [HttpGet("api/User/UserSector/{sector}/{position}")]
+        public IActionResult UserSector(string sector, string position)
+        {
+            var allUsers = _context.User;
+            var allJobs = _context.Job;
+
+            var query =
+                from user in allUsers
+                join job in allJobs on user.Id equals job.Id
+                where job.Sector == sector && job.Name == position
+                select new {Name = user.FirstName, Position = job.Name, Sector = job.Sector};
+
+            return Ok(query.ToList());
+        }
+
+        // GET api/<controller>/Bar
+        /// <summary>
+        /// Return all users group by sam job
+        /// </summary>
+        /// <param name="birthPlace"></param>
+        /// <response code="200">Success</response>
+        /// <response code="204">No Content</response>
+        [HttpGet("api/User/JobByCountry/{birthPlace}")]
+        public IActionResult JobByCountry(string birthPlace)
+        {
+            var allUsers = _context.User;
+            var allJobs = _context.Job;
+
+
+            var query =
+                from user in allUsers
+                where user.BirthPlace == birthPlace
+                join job in allJobs on user.Id equals job.Id
+                group job by job.Sector
+                into jobS
+                orderby jobS.Key
+                select jobS;
+                //select new {Id = user.Id, Name = user.FirstName,Country = user.BirthPlace, Job = job.Sector};
+
+
+            return Ok(query.ToList());
+        }
+
+        [HttpGet("api/User/GetAllUsers")]
+        public IActionResult GetAllUsers()
+        {
+            var allUsers = _context.User;
+            var allJobs = _context.Job;
+
+            var query =
+                from job in allJobs
+                join user in allUsers on job.Id equals user.Id into jobUsers
+                group jobUsers by job.Sector into sectorJob
+                select new {Sector = sectorJob.Key, Workers = (from u in sectorJob
+                                                               select u)};
+
+            return Ok(query.ToList());
+        }
+
 
 
         // PUT api/<controller>/5
@@ -323,7 +431,7 @@ namespace TodoApi.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <param name="data"></param>
-        /// <response code="200">If user is updated</response>
+        /// <response code="200">Success</response>
         /// <response code="204">No Content</response>
         [HttpPut("api/User/{Id}")]
         public async Task<IActionResult> Put(long id, User user)
@@ -345,7 +453,7 @@ namespace TodoApi.Controllers
         /// Delete user by ID
         /// </summary>
         /// <param name="id"></param>
-        /// <response code="200">If user is deleted</response>
+        /// <response code="200">Success</response>
         /// <response code="204">No Content</response>
         [HttpDelete("api/User/{Id}")]
         public async Task<ActionResult<User>> Delete(int id)
