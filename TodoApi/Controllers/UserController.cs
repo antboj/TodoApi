@@ -407,21 +407,31 @@ namespace TodoApi.Controllers
             return Ok(query.ToList());
         }
 
-        [HttpGet("api/User/GetAllUsers")]
-        public IActionResult GetAllUsers()
+        [HttpGet("api/User/GetAllUsersByJob")]
+        public IActionResult GetAllUsersByJob()
         {
             var allUsers = _context.User;
             var allJobs = _context.Job;
 
             var query =
                 from job in allJobs
-                join user in allUsers on job.Id equals user.Id into jobUsers
-                group jobUsers by job.Sector into sectorJob
-                select new {Sector = sectorJob.Key, Workers = (from u in sectorJob
-                                                               select u)};
+                join user in allUsers on job.Id equals user.Id
+                let joined = new {Job = job, User = user}
+                group joined by joined.Job.Sector
+                into groupedBySector
+                select new
+                {
+                    Job = groupedBySector.Key,
+                    Users = (
+                        from user in groupedBySector
+                        select user.User.FirstName + " " + user.User.LastName)
+                };
+
+            //var list = query.ToList();
 
             return Ok(query.ToList());
         }
+
 
 
 

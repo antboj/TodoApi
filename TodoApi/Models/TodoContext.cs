@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 
@@ -22,13 +19,12 @@ namespace TodoApi.Models
         {
             base.OnModelCreating(modelBuilder);
             var jsonString = File.ReadAllText("data.json");
-            var list = JsonConvert.DeserializeObject<List<User>>(jsonString);
-            modelBuilder.Entity<User>().HasData(list);
+            var userList = JsonConvert.DeserializeObject<List<User>>(jsonString);
+            modelBuilder.Entity<User>().HasData(userList);
 
             var jsonJobs = File.ReadAllText("jobs.json");
-            var jobsList = JsonConvert.DeserializeObject<List<Job>>(jsonJobs);
-            modelBuilder.Entity<Job>().HasData(jobsList);
+            var jobList = JsonConvert.DeserializeObject<List<Job>>(jsonJobs);
+            modelBuilder.Entity<Job>().HasData(jobList);
         }
-
     }
 }

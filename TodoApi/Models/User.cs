@@ -8,18 +8,7 @@ using Newtonsoft.Json;
 namespace TodoApi.Models
 {
     public class User
-    {
-
-        public static List<User> Users
-        {
-            get
-            {
-                var jsonString = File.ReadAllText(@"C:\Program Files\IIS Express\data.json");
-                var list = JsonConvert.DeserializeObject<List<User>>(jsonString);
-                return list;
-            }
-        }
-        
+    {       
         public int Id { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
