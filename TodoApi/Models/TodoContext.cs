@@ -18,6 +18,7 @@ namespace TodoApi.Models
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
             var jsonString = File.ReadAllText("data.json");
             var userList = JsonConvert.DeserializeObject<List<User>>(jsonString);
             modelBuilder.Entity<User>().HasData(userList);
