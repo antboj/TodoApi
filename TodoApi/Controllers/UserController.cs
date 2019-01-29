@@ -59,6 +59,8 @@ namespace TodoApi.Controllers
                 where id == User.Id
                 select User;
 
+            //var uQ = AllUsers.Where(x => x.Id == id);
+
             if (userQuery.Any())
             {
                 return Ok(userQuery.ToList());
@@ -83,6 +85,9 @@ namespace TodoApi.Controllers
                       orderby user.FirstName
                 select new { FirstName = user.FirstName, BirthYear = user.BirthDate};
 
+            //var uQ = allUsers.Where(x => x.BirthDate.Year == year).OrderBy(y => y.FirstName)
+            //    .Select(z => new {Firstname = z.FirstName, Birthdate = z.BirthDate});
+
             if (userQuery.Any())
             {
                 return Ok(userQuery.ToList());
@@ -105,6 +110,8 @@ namespace TodoApi.Controllers
                 (from user in allUsers
                     where user.BirthPlace == birthPlace
                     select user).Count();
+
+            //var uQ = allUsers.Where(x => x.BirthPlace == birthPlace).Count();
 
             var birthPlaceCount = userQuery;
 
@@ -130,6 +137,8 @@ namespace TodoApi.Controllers
                 from user in allUsers
                     where user.BirthPlace == birthPlace && (user.BirthDate.Year < (DateTime.Now.Year - 18))
                     select user;
+
+            //var uQ = allUsers.Where(x => x.BirthPlace == birthPlace && (x.BirthDate.Year < (DateTime.Now.Year - 18)));
 
             if (userQuery.Any())
             {
@@ -176,21 +185,16 @@ namespace TodoApi.Controllers
         {
             var AllUsers = _context.User;
 
-            List<User> MatchUser = new List<User>();
-
             var UserQuery =
                 from User in AllUsers
                 where firstName == User.FirstName && lastName == User.LastName
                 select User;
 
-            foreach(var user in UserQuery)
-            {
-                MatchUser.Add(user);
-            }
+            //var uQ = AllUsers.Where(x => x.FirstName == firstName && x.LastName == lastName);
 
-            if (MatchUser.Any())
+            if (UserQuery.Any())
             {
-                return Ok(MatchUser);
+                return Ok(UserQuery.ToList());
             }
 
             return NotFound();
@@ -230,18 +234,10 @@ namespace TodoApi.Controllers
         {
             var AllUsers = _context.User;
 
-            //List<User> MatchUser = new List<User>();
-
             var userQuery =
                 from user in AllUsers
                 where email == user.Email
                 select user;
-
-            //foreach (var user in UserQuery)
-            //{
-            //    MatchUser.Add(user);
-            //}
-            //return MatchUser;
 
             if (userQuery.Any())
             {
@@ -285,21 +281,16 @@ namespace TodoApi.Controllers
         {
             var AllUsers = _context.User;
 
-            List<User> MatchUser = new List<User>();
-
             var UserQuery =
                 from user in AllUsers
                 where birthDate == user.BirthDate
                 select user;
+            
+            //var uQ = AllUsers.Where(x => x.BirthDate == birthDate);
 
-            foreach (var user in UserQuery)
+            if (UserQuery.Any())
             {
-                MatchUser.Add(user);
-            }
-
-            if (MatchUser.Any())
-            {
-                return Ok(MatchUser);
+                return Ok(UserQuery);
             }
 
             return NotFound();
@@ -347,6 +338,8 @@ namespace TodoApi.Controllers
                 where birthDate == user.BirthDate && birthPlace == user.BirthPlace
                 select user;
 
+            //var uQ = AllUsers.Where(x => x.BirthDate == birthDate && x.BirthPlace == birthPlace);
+
             if (userQuery.Any())
             {
                 return Ok(userQuery.ToList());
@@ -370,9 +363,12 @@ namespace TodoApi.Controllers
 
             var userJobQuery =
                 from user in allUsers
-                where user.Id == id
                 join job in allJobs on user.Id equals job.Id
+                where user.Id == id
                 select new {Name = user.FirstName, Job = job.Name, Sector = job.Sector};
+
+            //var uQ = allUsers.Where(x => x.Id == id).Join(allJobs, y => y.Id, y => y.Id,
+            //    (user, job) => new {Name = user.FirstName, Job = job.Name, Sector = job.Sector});
 
             if (userJobQuery.Any())
             {
@@ -402,6 +398,10 @@ namespace TodoApi.Controllers
                 where job.Sector == sector && job.Name == position
                 select new {Name = user.FirstName, Position = job.Name, Sector = job.Sector};
 
+            //var uQ = allUsers.Join(allJobs, x => x.Id, x => x.Id,
+            //        (user, job) => new {Name = user.FirstName, Position = job.Name, Sector = job.Sector})
+            //    .Where(x => x.Sector == sector && x.Position == position);
+
             if (query.Any())
             {
                 return Ok(query.ToList());
@@ -422,8 +422,7 @@ namespace TodoApi.Controllers
         {
             var allUsers = _context.User;
             var allJobs = _context.Job;
-
-
+            
             var query =
                 from user in allUsers
                 where user.BirthPlace == birthPlace
@@ -432,9 +431,11 @@ namespace TodoApi.Controllers
                 into jobS
                 orderby jobS.Key
                 select jobS;
+
             //select new {Id = user.Id, Name = user.FirstName,Country = user.BirthPlace, Job = job.Sector};
 
-
+           //var uQ = allUsers.Where(x => x.BirthPlace == birthPlace).Join(allJobs, y => y.Id, y => y.Id, (job, person) => new{Job = job, User = user}) 
+            
             if (query.Any())
             {
                 return Ok(query.ToList());
