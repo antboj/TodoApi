@@ -11,7 +11,7 @@ using TodoApi.Models;
 
 namespace TodoApi.Controllers
 {
-    public class UserController : Controller
+    public class UserController : BaseController<User>
     {
         private static TodoContext _context;
 
@@ -21,6 +21,8 @@ namespace TodoApi.Controllers
 
             _context = context;
         }
+
+
 
         /*
         // GET api/<controller>/5
@@ -434,13 +436,13 @@ namespace TodoApi.Controllers
 
             //select new {Id = user.Id, Name = user.FirstName,Country = user.BirthPlace, Job = job.Sector};
 
-            var uQ = allUsers.Where(x => x.BirthPlace == birthPlace)
-                .Join(allJobs, y => y.Id, y => y.Id, (job, person) => new {Job = job, User = person})
-                .GroupBy(z => z.User.Sector).Select(o => new {Sector = o.Key, Name = o.Select(p => p.Job.FirstName)});
+            //var uQ = allUsers.Where(x => x.BirthPlace == birthPlace)
+            //    .Join(allJobs, y => y.Id, y => y.Id, (job, person) => new {Job = job, User = person})
+            //    .GroupBy(z => z.User.Sector).Select(o => new {Sector = o.Key, Name = o.Select(p => p.Job.FirstName)});
             
-            if (uQ.Any())
+            if (query.Any())
             {
-                return Ok(uQ.ToList());
+                return Ok(query.ToList());
             }
 
             return NotFound();
