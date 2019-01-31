@@ -11,7 +11,7 @@ using TodoApi.Models;
 
 namespace TodoApi.Controllers
 {
-    public class UserController : BaseController<User>
+    public class UserController : Controller
     {
         private static TodoContext _context;
 
@@ -22,7 +22,89 @@ namespace TodoApi.Controllers
             _context = context;
         }
 
+        //////////////////////////////////////////// SQL METHODS //////////////////////////////////////////////////////
 
+        // GET api/<controller>/GetSAll
+        [HttpGet("api/User/GetSAll")]
+        public IActionResult GetSAll()
+        {
+            var allUsers = _context.User;
+
+            if (allUsers.Any())
+            {
+                return Ok(allUsers.ToList());
+            }
+
+            return NotFound();
+        }
+
+        // GET api/<controller>/GetSById/5
+        [HttpGet("api/User/GetSById/{id}")]
+        public IActionResult GetSById(int id)
+        {
+            var allUsers = _context.User;
+            var foundUser = allUsers.Find(id);
+
+            if (foundUser != null)
+            {
+                return Ok(foundUser);
+            }
+
+            return NotFound();
+        }
+
+        // DELETE api/<controller>/DeleteS/5
+        [HttpDelete("api/User/DeleteS/{id}")]
+        public IActionResult DeleteS(int id)
+        {
+            var user = _context.User.Find(id);
+
+            if (user != null)
+            {
+                _context.User.Remove(user);
+                _context.SaveChanges();
+                return Ok();
+            }
+
+            return NotFound();
+        }
+
+        // POST api/<controller>/AddSUser
+        [HttpPost("api/User/AddSUser")]
+        public IActionResult AddSUser([FromBody] User user)
+        {
+            if (user != null)
+            {
+                _context.User.Add(user);
+                _context.SaveChanges();
+                return Ok();
+            }
+
+            return BadRequest();
+        }
+
+        // PUT api/<controller>/UpdateSUser/5
+        [HttpPut("api/User/UpdateSUser/{id}")]
+        public IActionResult UpdateSUser(int id, [FromBody] User user)
+        {
+            var foundUser = _context.User.Find(id);
+
+            if (foundUser != null)
+            {
+                foundUser.FirstName = user.FirstName;
+                foundUser.LastName = user.LastName;
+                foundUser.BirthDate = user.BirthDate;
+                foundUser.BirthPlace = user.BirthPlace;
+                foundUser.Email = user.Email;
+                
+                _context.SaveChanges();
+                return Ok();
+            }
+
+            return NotFound();
+        }
+
+        ////////////////////////////////////////////////////// LINQ ////////////////////////////////////////////////////////
 
         /*
         // GET api/<controller>/5
@@ -54,12 +136,12 @@ namespace TodoApi.Controllers
         [HttpGet("api/User/GetById{id}")]
         public IActionResult GetById(int id)
         {
-            var AllUsers = _context.User;
+            var allUsers = _context.User;
 
             var userQuery =
-                from User in AllUsers
-                where id == User.Id
-                select User;
+                from user in allUsers
+                where id == user.Id
+                select user;
 
             //var uQ = AllUsers.Where(x => x.Id == id);
 
@@ -181,22 +263,22 @@ namespace TodoApi.Controllers
         /// <param name="firstName"></param>
         /// <param name="lastName"></param>
         /// <response code="200">Success</response>
-        /// <response code="204">No Content</response>
+        /// <response code="404">No Content</response>
         [HttpGet("api/User/Name{firstName}/{lastName}")]
         public IActionResult Name(string firstName, string lastName)
         {
-            var AllUsers = _context.User;
+            var allUsers = _context.User;
 
-            var UserQuery =
-                from User in AllUsers
+            var userQuery =
+                from User in allUsers
                 where firstName == User.FirstName && lastName == User.LastName
                 select User;
 
             //var uQ = AllUsers.Where(x => x.FirstName == firstName && x.LastName == lastName);
 
-            if (UserQuery.Any())
+            if (userQuery.Any())
             {
-                return Ok(UserQuery.ToList());
+                return Ok(userQuery.ToList());
             }
 
             return NotFound();
@@ -230,14 +312,14 @@ namespace TodoApi.Controllers
         /// </summary>
         /// <param name="email"></param>
         /// <response code="200">If user is found</response>
-        /// <response code="204">No Content</response>
+        /// <response code="404">No Content</response>
         [HttpGet("api/User/Email{email}")]
         public IActionResult Email(string email)
         {
-            var AllUsers = _context.User;
+            var allUsers = _context.User;
 
             var userQuery =
-                from user in AllUsers
+                from user in allUsers
                 where email == user.Email
                 select user;
 
@@ -277,22 +359,22 @@ namespace TodoApi.Controllers
         /// </summary>
         /// <param name="birthDate"></param>
         /// <response code="200">If user is found</response>
-        /// <response code="204">No Content</response>
+        /// <response code="404">No Content</response>
         [HttpGet("api/User/Date/{birthDate}")]
         public IActionResult Date(DateTime birthDate)
         {
-            var AllUsers = _context.User;
+            var allUsers = _context.User;
 
-            var UserQuery =
-                from user in AllUsers
+            var userQuery =
+                from user in allUsers
                 where birthDate == user.BirthDate
                 select user;
             
             //var uQ = AllUsers.Where(x => x.BirthDate == birthDate);
 
-            if (UserQuery.Any())
+            if (userQuery.Any())
             {
-                return Ok(UserQuery);
+                return Ok(userQuery);
             }
 
             return NotFound();
@@ -329,14 +411,14 @@ namespace TodoApi.Controllers
         /// <param name="birthDate"></param>
         /// <param name="birthPlace"></param>
         /// <response code="200">Success</response>
-        /// <response code="204">No Content</response>
+        /// <response code="404">No Content</response>
         [HttpGet("api/User/DatePlace/{birthDate}/{birthPlace}")]
         public IActionResult DatePlace(DateTime birthDate, string birthPlace)
         {
-            var AllUsers = _context.User;
+            var allUsers = _context.User;
 
             var userQuery =
-                from user in AllUsers
+                from user in allUsers
                 where birthDate == user.BirthDate && birthPlace == user.BirthPlace
                 select user;
 
@@ -356,7 +438,7 @@ namespace TodoApi.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <response code="200">Success</response>
-        /// <response code="204">No Content</response>
+        /// <response code="404">No Content</response>
         [HttpGet("api/User/UserJob/{id}")]
         public IActionResult UserJob(int id)
         {
@@ -387,7 +469,7 @@ namespace TodoApi.Controllers
         /// <param name="sector"></param>
         /// <param name="position"></param>
         /// <response code="200">Success</response>
-        /// <response code="204">No Content</response>
+        /// <response code="404">No Content</response>
         [HttpGet("api/User/UserSector/{sector}/{position}")]
         public IActionResult UserSector(string sector, string position)
         {
@@ -418,28 +500,26 @@ namespace TodoApi.Controllers
         /// </summary>
         /// <param name="birthPlace"></param>
         /// <response code="200">Success</response>
-        /// <response code="204">No Content</response>
+        /// <response code="404">No Content</response>
         [HttpGet("api/User/JobByCountry/{birthPlace}")]
         public IActionResult JobByCountry(string birthPlace)
         {
             var allUsers = _context.User;
             var allJobs = _context.Job;
-            
+
             var query =
                 from user in allUsers
                 where user.BirthPlace == birthPlace
                 join job in allJobs on user.Id equals job.Id
-                group job by job.Sector
-                into jobS
-                orderby jobS.Key
-                select jobS;
-
-            //select new {Id = user.Id, Name = user.FirstName,Country = user.BirthPlace, Job = job.Sector};
+                let joined = new {Job = job, User = user}
+                group joined by joined.Job.Sector
+                into sectorGruop
+                select new {Sector = sectorGruop.Key, Users = (from user in sectorGruop select user.User.FirstName)};
 
             //var uQ = allUsers.Where(x => x.BirthPlace == birthPlace)
-            //    .Join(allJobs, y => y.Id, y => y.Id, (job, person) => new {Job = job, User = person})
-            //    .GroupBy(z => z.User.Sector).Select(o => new {Sector = o.Key, Name = o.Select(p => p.Job.FirstName)});
-            
+            //    .Join(allJobs, y => y.Id, y => y.Id, (person, job) => new { Job = job, User = person })
+            //    .GroupBy(z => z.Job.Sector).Select(o => new { Sector = o.Key, Name = o.Select(p => p.User.FirstName) });
+
             if (query.Any())
             {
                 return Ok(query.ToList());
@@ -453,7 +533,7 @@ namespace TodoApi.Controllers
         /// Return all users group by same sector
         /// </summary>
         /// <response code="200">Success</response>
-        /// <response code="204">No Content</response>
+        /// <response code="404">No Content</response>
         [HttpGet("api/User/GetAllUsersByJob")]
         public IActionResult GetAllUsersByJob()
         {
@@ -474,6 +554,11 @@ namespace TodoApi.Controllers
                         select user.User.FirstName + " " + user.User.LastName)
                 };
 
+            //var uQ = allJobs.Join(allUsers, u => u.Id, u => u.Id, (job, user) => new {Job = job, User = user})
+            //    .GroupBy(g => g.Job.Sector).Select(x => new
+            //        {Sector = x.Key, Name = x.Select(y => y.User.FirstName + " " + y.User.LastName)});
+
+
             if (query.Any())
             {
                 return Ok(query.ToList());
@@ -484,7 +569,7 @@ namespace TodoApi.Controllers
 
 
 
-
+        /*
         // PUT api/<controller>/5
         /// <summary>
         /// Update user by ID
@@ -505,8 +590,9 @@ namespace TodoApi.Controllers
 
             return Ok();
         }
+        */
 
-
+        /*
         // DELETE api/<controller>/5
         /// <summary>
         /// Delete user by ID
@@ -528,6 +614,7 @@ namespace TodoApi.Controllers
 
             return User;
         }
+        */
     }
 }
 

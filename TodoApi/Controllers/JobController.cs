@@ -22,8 +22,8 @@ namespace TodoApi.Controllers
         }
 
         // GET: api/<controller>
-        [HttpGet("GetSector")]
-        public IActionResult GetSector(string sector)
+        [HttpGet("GetBySector")]
+        public IActionResult GetBySector(string sector)
         {
             var allJobs = _context.Job;
 
@@ -35,7 +35,6 @@ namespace TodoApi.Controllers
             return Ok(sectorQuery.ToList());
 
         }
-
         
     }
 }
