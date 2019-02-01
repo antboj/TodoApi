@@ -17,6 +17,7 @@ namespace TodoApi.Controllers
 
         public UserController(TodoContext context)
         {
+            // not required
             context.Database.EnsureCreated();
 
             _context = context;
@@ -54,8 +55,8 @@ namespace TodoApi.Controllers
         }
 
         // DELETE api/<controller>/DeleteS/5
-        [HttpDelete("api/User/DeleteS/{id}")]
-        public IActionResult DeleteS(int id)
+        [HttpDelete("api/User/Delete/{id}")]
+        public IActionResult Delete(int id)
         {
             var user = _context.User.Find(id);
 
@@ -70,7 +71,7 @@ namespace TodoApi.Controllers
         }
 
         // POST api/<controller>/AddSUser
-        [HttpPost("api/User/AddSUser")]
+        [HttpPost("api/User/AddUser")]
         public IActionResult AddSUser([FromBody] User user)
         {
             if (user != null)
@@ -84,8 +85,8 @@ namespace TodoApi.Controllers
         }
 
         // PUT api/<controller>/UpdateSUser/5
-        [HttpPut("api/User/UpdateSUser/{id}")]
-        public IActionResult UpdateSUser(int id, [FromBody] User user)
+        [HttpPut("api/User/UpdateUser/{id}")]
+        public IActionResult UpdateUser(int id, [FromBody] User user)
         {
             var foundUser = _context.User.Find(id);
 
@@ -103,8 +104,209 @@ namespace TodoApi.Controllers
             return NotFound();
         }
 
+        // GET api/<controller>/GetSByYear/1980
+        [HttpGet("api/User/GetByYear{year}")]
+        public IActionResult GetByYear(int year)
+        {
+            var allUsers = _context.User;
 
+            var userQuery =
+                from user in allUsers
+                where user.BirthDate.Year == year
+                orderby user.Name
+                select new { Name = user.Name, BirthYear = user.BirthDate };
 
+            var uQ = allUsers.Where(x => x.BirthDate.Year == year).OrderBy(y => y.Name)
+                .Select(z => new { Name = z.Name, Birthdate = z.BirthDate });
+
+            if (userQuery.Any())
+            {
+                return Ok(userQuery.ToList());
+            }
+
+            return NotFound();
+        }
+
+        // GET api/<controller>/OfAgeFromPlace/Montenegro
+        [HttpGet("api/User/OfAgeFromPlace/{birthPlace}")]
+        public IActionResult OfAgeFromPlace(string birthPlace)
+        {
+            var allUsers = _context.User.Include(x => x.Job);
+
+            var userQuery =
+                from user in allUsers
+                where user.BirthPlace == birthPlace && (user.BirthDate.Year < (DateTime.Now.Year - 18))
+                select new {Name = user.Name, Age = (DateTime.Now.Year - user.BirthDate.Year)};
+
+            //var uQ = allUsers.Where(x => x.BirthPlace == birthPlace && (x.BirthDate.Year < (DateTime.Now.Year - 18)));
+
+            if (userQuery.Any())
+            {
+                return Ok(userQuery.ToList());
+            }
+
+            return NotFound();
+
+        }
+
+        // GET api/<controller>/Email/example@mail.com
+        [HttpGet("api/User/Email{email}")]
+        public IActionResult Email(string email)
+        {
+            var allUsers = _context.User.Include(x => x.Job);
+
+            var userQuery =
+                from user in allUsers
+                where email == user.Email
+                select user;
+
+            //var uQ = allUsers.Where(x => x.Email == email);
+
+            if (userQuery.Any())
+            {
+                return Ok(userQuery.ToList());
+            }
+
+            return NotFound();
+        }
+
+        // GET api/<controller>/2000-12-12
+        [HttpGet("api/User/Date/{birthDate}")]
+        public IActionResult Date(DateTime birthDate)
+        {
+            var allUsers = _context.User.Include(x => x.Job);
+
+            var userQuery =
+                from user in allUsers
+                where birthDate == user.BirthDate
+                select user;
+
+            //var uQ = AllUsers.Where(x => x.BirthDate == birthDate);
+
+            if (userQuery.Any())
+            {
+                return Ok(userQuery);
+            }
+
+            return NotFound();
+
+        }
+
+        // GET api/<controller>/DatePlace/1993-04-27/Bar
+        [HttpGet("api/User/DatePlace/{birthDate}/{birthPlace}")]
+        public IActionResult DatePlace(DateTime birthDate, string birthPlace)
+        {
+            var allUsers = _context.User.Include(x => x.Job);
+
+            var userQuery =
+                from user in allUsers
+                where birthDate == user.BirthDate && birthPlace == user.BirthPlace
+                select user;
+
+            //var uQ = AllUsers.Where(x => x.BirthDate == birthDate && x.BirthPlace == birthPlace);
+
+            if (userQuery.Any())
+            {
+                return Ok(userQuery.ToList());
+            }
+
+            return NotFound();
+        }
+
+        // GET api/<controller>/Menager
+        [HttpGet("api/User/UserByJob/{position}")]
+        public IActionResult UserByJob(string position)
+        {
+            var allUsers = _context.User.Include(x => x.Job);
+
+            var query =
+                from user in allUsers
+                where user.Job.Position == position
+                select new { Name = user.Name, Position = user.Job.Position};
+
+            var uQ = allUsers.Where(x => x.Job.Position == position).Select(u => new{ Name = u.Name, Position = u.Job.Position});
+
+            if (query.Any())
+            {
+                return Ok(query.ToList());
+            }
+
+            return NotFound();
+        }
+
+        // GET api/<controller>/GetAllUsersByJob
+        [HttpGet("api/User/GetAllUsersByJob")]
+        public IActionResult GetAllUsersByJob()
+        {
+            var allUsers = _context.User.Include(x => x.Job);
+
+            var query =
+                from user in allUsers
+                group user by user.Job.Position
+                into groupedByPosition
+                select new
+                {
+                    Job = groupedByPosition.Key,
+                    Users = (
+                        from user in groupedByPosition
+                        select user.Name)
+                };
+
+            //var uQ = allUsers.GroupBy(x => x.Job.Position).Select(u => new {Position = u.Key, Name = u.Select(y => y.Name)});
+
+            if (query.Any())
+            {
+                return Ok(query.ToList());
+            }
+
+            return NotFound();
+        }
+
+        // GET api<controller>/Montenegro
+        [HttpGet("api/User/JobByCountry/{birthPlace}")]
+        public IActionResult JobByCountry(string birthPlace)
+        {
+            var allUsers = _context.User.Include(x => x.Job);
+
+            var query =
+                from user in allUsers
+                where user.BirthPlace == birthPlace
+                group user by user.Job.Position
+                into sectorGruop
+                select new { Sector = sectorGruop.Key, Users = (from user in sectorGruop select user.Name) };
+
+            //var uQ = allUsers.Where(x => x.BirthPlace == birthPlace)
+            //    .GroupBy(z => z.Job.Position)
+            //    .Select(o => new {Position = o.Key, Name = o.Select(p => p.Name)});
+
+            if (query.Any())
+            {
+                return Ok(query.ToList());
+            }
+
+            return NotFound();
+        }
+
+        // GET api/<controller>/Andrej/Bojic
+        [HttpGet("api/User/Name{firstName}/{lastName}")]
+        public IActionResult Name(string firstName, string lastName)
+        {
+            var allUsers = _context.User;
+
+            var userQuery =
+                from user in allUsers
+                where firstName + " " + lastName == user.Name
+                select user;
+
+            //var uQ = allUsers.Where(x => x.Name == (firstName + " " + lastName));
+
+            if (userQuery.Any())
+            {
+                return Ok(userQuery.ToList());
+            }
+
+            return NotFound();
+        }
 
         /*
         //////////////////////////////////////////// SQL METHODS //////////////////////////////////////////////////////
