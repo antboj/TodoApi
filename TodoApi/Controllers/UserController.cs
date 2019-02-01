@@ -22,8 +22,93 @@ namespace TodoApi.Controllers
             _context = context;
         }
 
-        //////////////////////////////////////////// SQL METHODS //////////////////////////////////////////////////////
+        /////////////////////////////////////////// NEW MODEL PROPERTIES QUERY METHODS /////////////////////////////////////
 
+        // GET api/<controller>/GetSAll
+        [HttpGet("api/User/GetAll")]
+        public IActionResult GetAll()
+        {
+            var allUsers = _context.User.Include(x => x.Job);
+
+            if (allUsers.Any())
+            {
+                return Ok(allUsers.ToList());
+            }
+
+            return NotFound();
+        }
+
+        // GET api/<controller>/GetSById/5
+        [HttpGet("api/User/GetById/{id}")]
+        public IActionResult GetById(int id)
+        {
+            var allUsers = _context.User.Include(x => x.Job);
+            var foundUser = allUsers.FirstOrDefault(x => x.Id == id);
+
+            if (foundUser != null)
+            {
+                return Ok(foundUser);
+            }
+
+            return NotFound();
+        }
+
+        // DELETE api/<controller>/DeleteS/5
+        [HttpDelete("api/User/DeleteS/{id}")]
+        public IActionResult DeleteS(int id)
+        {
+            var user = _context.User.Find(id);
+
+            if (user != null)
+            {
+                _context.User.Remove(user);
+                _context.SaveChanges();
+                return Ok();
+            }
+
+            return NotFound();
+        }
+
+        // POST api/<controller>/AddSUser
+        [HttpPost("api/User/AddSUser")]
+        public IActionResult AddSUser([FromBody] User user)
+        {
+            if (user != null)
+            {
+                _context.User.Add(user);
+                _context.SaveChanges();
+                return Ok();
+            }
+
+            return BadRequest();
+        }
+
+        // PUT api/<controller>/UpdateSUser/5
+        [HttpPut("api/User/UpdateSUser/{id}")]
+        public IActionResult UpdateSUser(int id, [FromBody] User user)
+        {
+            var foundUser = _context.User.Find(id);
+
+            if (foundUser != null)
+            {
+                foundUser.Name = user.Name;
+                foundUser.BirthDate = user.BirthDate;
+                foundUser.BirthPlace = user.BirthPlace;
+                foundUser.Email = user.Email;
+
+                _context.SaveChanges();
+                return Ok();
+            }
+
+            return NotFound();
+        }
+
+
+
+
+        /*
+        //////////////////////////////////////////// SQL METHODS //////////////////////////////////////////////////////
+        
         // GET api/<controller>/GetSAll
         [HttpGet("api/User/GetSAll")]
         public IActionResult GetSAll()
@@ -106,26 +191,26 @@ namespace TodoApi.Controllers
 
         ////////////////////////////////////////////////////// LINQ ////////////////////////////////////////////////////////
 
-        /*
-        // GET api/<controller>/5
-        /// <summary>
-        /// Return user by ID
-        /// </summary>
-        /// <param name="id"></param>
-        [HttpGet("api/User/{id}")]
-        public async Task<ActionResult<User>> Get(int id)
-        {
-            var user = await _context.User.FindAsync(id);
+        
+        //// GET api/<controller>/5
+        ///// <summary>
+        ///// Return user by ID
+        ///// </summary>
+        ///// <param name="id"></param>
+        //[HttpGet("api/User/{id}")]
+        //public async Task<ActionResult<User>> Get(int id)
+        //{
+        //    var user = await _context.User.FindAsync(id);
 
-            if (user != null)
-            {
-                return user;
-            }
+        //    if (user != null)
+        //    {
+        //        return user;
+        //    }
 
-            return NotFound();
-        }
-        */
-
+        //    return NotFound();
+        //}
+        
+        
         // GET api/<controller>/5
         /// <summary>
         /// Return user by ID
@@ -152,6 +237,7 @@ namespace TodoApi.Controllers
 
             return NotFound();
         }
+        
 
         // GET api/<controller>/1993
         /// <summary>
@@ -233,28 +319,28 @@ namespace TodoApi.Controllers
 
         }
 
-        /*
-        // GET api/<controller>/Name/Andrej/Bojic
-        /// <summary>
-        /// Return user by Firstname and Lastname
-        /// </summary>
-        /// <param name="first_name"></param>
-        /// <param name="last_name"></param>
-        /// <response code="200">If user is found</response>
-        /// <response code="204">No Content</response>
-        [HttpGet("api/User/Name{first_name}/{last_name}")]
-        public async Task<ActionResult<List<User>>> Name(string first_name, string last_name)
-        {
-            var user = await _context.User.Where(o => (o.first_name == first_name && o.last_name == last_name)).ToListAsync();
+        
+        //// GET api/<controller>/Name/Andrej/Bojic
+        ///// <summary>
+        ///// Return user by Firstname and Lastname
+        ///// </summary>
+        ///// <param name="first_name"></param>
+        ///// <param name="last_name"></param>
+        ///// <response code="200">If user is found</response>
+        ///// <response code="204">No Content</response>
+        //[HttpGet("api/User/Name{first_name}/{last_name}")]
+        //public async Task<ActionResult<List<User>>> Name(string first_name, string last_name)
+        //{
+        //    var user = await _context.User.Where(o => (o.first_name == first_name && o.last_name == last_name)).ToListAsync();
 
-            if (user != null)
-            {
-                return user;
-            }
+        //    if (user != null)
+        //    {
+        //        return user;
+        //    }
 
-            return NotFound();
-        }
-        */
+        //    return NotFound();
+        //}
+        
 
         // GET api/<controller>/Name/Andrej/Bojic
         /// <summary>
@@ -284,27 +370,27 @@ namespace TodoApi.Controllers
             return NotFound();
         }
 
-        /*
-        // GET api/<controller>/Email/example@mail.com
-        /// <summary>
-        /// Return user by Email
-        /// </summary>
-        /// <param name="email"></param>
-        /// <response code="200">If user is found</response>
-        /// <response code="204">No Content</response>
-        [HttpGet("api/User/Email{email}")]
-        public async Task<ActionResult<User>> Email(string email)
-        {
-            var user = await _context.User.Where(o => o.email == email).FirstOrDefaultAsync();
+        
+        //// GET api/<controller>/Email/example@mail.com
+        ///// <summary>
+        ///// Return user by Email
+        ///// </summary>
+        ///// <param name="email"></param>
+        ///// <response code="200">If user is found</response>
+        ///// <response code="204">No Content</response>
+        //[HttpGet("api/User/Email{email}")]
+        //public async Task<ActionResult<User>> Email(string email)
+        //{
+        //    var user = await _context.User.Where(o => o.email == email).FirstOrDefaultAsync();
 
-            if (user != null)
-            {
-                return user;
-            }
+        //    if (user != null)
+        //    {
+        //        return user;
+        //    }
 
-            return NotFound();
-        }
-        */
+        //    return NotFound();
+        //}
+        
 
         // GET api/<controller>/Email/example@mail.com
         /// <summary>
@@ -331,27 +417,27 @@ namespace TodoApi.Controllers
             return NotFound();
         }
 
-        /*
-        // GET api/<controller>/Date/1993-04-27
-        /// <summary>
-        /// Return user by Birthdate
-        /// </summary>
-        /// <param name="birthDate"></param>
-        /// <response code="200">If user is found</response>
-        /// <response code="204">No Content</response>
-        [HttpGet("api/User/Date/{BirthDate}")]
-        public async Task<ActionResult<List<User>>> Date(DateTime birthDate)
-        {
-            var User = await _context.User.Where(o => DateTime.Compare(o.BirthDate, birthDate) == 0).ToListAsync();
+        
+        //// GET api/<controller>/Date/1993-04-27
+        ///// <summary>
+        ///// Return user by Birthdate
+        ///// </summary>
+        ///// <param name="birthDate"></param>
+        ///// <response code="200">If user is found</response>
+        ///// <response code="204">No Content</response>
+        //[HttpGet("api/User/Date/{BirthDate}")]
+        //public async Task<ActionResult<List<User>>> Date(DateTime birthDate)
+        //{
+        //    var User = await _context.User.Where(o => DateTime.Compare(o.BirthDate, birthDate) == 0).ToListAsync();
 
-            if (User != null)
-            {
-                return User;
-            }
+        //    if (User != null)
+        //    {
+        //        return User;
+        //    }
 
-            return NotFound();
-        }
-        */
+        //    return NotFound();
+        //}
+        
 
         // GET api/<controller>/Date/1993-04-27
         /// <summary>
@@ -381,28 +467,28 @@ namespace TodoApi.Controllers
 
         }
 
-        /*
-        // GET api/<controller>/DatePlace/1993-04-27/Bar
-        /// <summary>
-        /// Return user by Birthdate and Birthplace
-        /// </summary>
-        /// <param name="birthDate"></param>
-        /// <param name="birthPlace"></param>
-        /// <response code="200">If user is found</response>
-        /// <response code="204">No Content</response>
-        [HttpGet("api/User/DatePlace/{birthDate}/{birthPlace}")]
-        public async Task<ActionResult<List<User>>> DatePlace(DateTime birthDate, string birthPlace)
-        {
-            var User = await _context.User.Where(o => (DateTime.Compare(o.BirthDate, birthDate) == 0) && o.BirthPlace == birthPlace).ToListAsync();
+        
+        //// GET api/<controller>/DatePlace/1993-04-27/Bar
+        ///// <summary>
+        ///// Return user by Birthdate and Birthplace
+        ///// </summary>
+        ///// <param name="birthDate"></param>
+        ///// <param name="birthPlace"></param>
+        ///// <response code="200">If user is found</response>
+        ///// <response code="204">No Content</response>
+        //[HttpGet("api/User/DatePlace/{birthDate}/{birthPlace}")]
+        //public async Task<ActionResult<List<User>>> DatePlace(DateTime birthDate, string birthPlace)
+        //{
+        //    var User = await _context.User.Where(o => (DateTime.Compare(o.BirthDate, birthDate) == 0) && o.BirthPlace == birthPlace).ToListAsync();
 
-            if (User != null)
-            {
-                return User;
-            }
+        //    if (User != null)
+        //    {
+        //        return User;
+        //    }
 
-            return NotFound();
-        }
-        */
+        //    return NotFound();
+        //}
+        
 
         // GET api/<controller>/DatePlace/1993-04-27/Bar
         /// <summary>
@@ -569,52 +655,53 @@ namespace TodoApi.Controllers
 
 
 
-        /*
-        // PUT api/<controller>/5
-        /// <summary>
-        /// Update user by ID
-        /// </summary>
-        /// <param name="id"></param>
-        /// <response code="200">Success</response>
-        /// <response code="204">No Content</response>
-        [HttpPut("api/User/{Id}")]
-        public async Task<IActionResult> Put(long id, User user)
-        {
-            if (id != user.Id)
-            {
-                return BadRequest();
-            }
+        
+        //// PUT api/<controller>/5
+        ///// <summary>
+        ///// Update user by ID
+        ///// </summary>
+        ///// <param name="id"></param>
+        ///// <response code="200">Success</response>
+        ///// <response code="204">No Content</response>
+        //[HttpPut("api/User/{Id}")]
+        //public async Task<IActionResult> Put(long id, User user)
+        //{
+        //    if (id != user.Id)
+        //    {
+        //        return BadRequest();
+        //    }
 
-            _context.Entry(user).State = EntityState.Modified;
-            await _context.SaveChangesAsync();
+        //    _context.Entry(user).State = EntityState.Modified;
+        //    await _context.SaveChangesAsync();
 
-            return Ok();
-        }
+        //    return Ok();
+        //}
+        
+
+        
+        //// DELETE api/<controller>/5
+        ///// <summary>
+        ///// Delete user by ID
+        ///// </summary>
+        ///// <param name="id"></param>
+        ///// <response code="200">Success</response>
+        ///// <response code="204">No Content</response>
+        //[HttpDelete("api/User/{Id}")]
+        //public async Task<ActionResult<User>> Delete(int id)
+        //{
+        //    var User = await _context.User.FindAsync(id);
+        //    if (User == null)
+        //    {
+        //        return NotFound();
+        //    }
+
+        //    _context.User.Remove(User);
+        //    await _context.SaveChangesAsync();
+
+        //    return User;
+        //}
         */
 
-        /*
-        // DELETE api/<controller>/5
-        /// <summary>
-        /// Delete user by ID
-        /// </summary>
-        /// <param name="id"></param>
-        /// <response code="200">Success</response>
-        /// <response code="204">No Content</response>
-        [HttpDelete("api/User/{Id}")]
-        public async Task<ActionResult<User>> Delete(int id)
-        {
-            var User = await _context.User.FindAsync(id);
-            if (User == null)
-            {
-                return NotFound();
-            }
-
-            _context.User.Remove(User);
-            await _context.SaveChangesAsync();
-
-            return User;
-        }
-        */
     }
 }
 

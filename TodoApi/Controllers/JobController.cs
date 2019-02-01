@@ -14,6 +14,7 @@ namespace TodoApi.Controllers
     {
         private static TodoContext _context;
 
+        /*
         public JobController(TodoContext context)
         {
             context.Database.EnsureCreated();
@@ -35,6 +36,6 @@ namespace TodoApi.Controllers
             return Ok(sectorQuery.ToList());
 
         }
-        
+        */
     }
 }
