@@ -29,7 +29,9 @@ namespace TodoApi.Controllers
         [HttpGet("api/User/GetAll")]
         public IActionResult GetAll()
         {
-            var allUsers = _context.User.Include(x => x.Job);
+            var allUsers = _context.User.Include(jobs => jobs.Job).AsNoTracking();
+
+            var query = _context.User.FromSql("SELECT * FROM dbo.User");
 
             if (allUsers.Any())
             {
@@ -39,12 +41,19 @@ namespace TodoApi.Controllers
             return NotFound();
         }
 
+        // Async method
+        [HttpGet("api/User/GetAllAS")]
+        public async Task<List<User>> GetAllAs()
+        {
+            return await _context.User.Include(jobs => jobs.Job).ToListAsync();
+        }
+
         // GET api/<controller>/GetSById/5
         [HttpGet("api/User/GetById/{id}")]
         public IActionResult GetById(int id)
         {
             var allUsers = _context.User.Include(x => x.Job);
-            var foundUser = allUsers.FirstOrDefault(x => x.Id == id);
+            var foundUser = allUsers.Single(u => u.Id == id);
 
             if (foundUser != null)
             {
@@ -116,8 +125,8 @@ namespace TodoApi.Controllers
                 orderby user.Name
                 select new { Name = user.Name, BirthYear = user.BirthDate };
 
-            var uQ = allUsers.Where(x => x.BirthDate.Year == year).OrderBy(y => y.Name)
-                .Select(z => new { Name = z.Name, Birthdate = z.BirthDate });
+            //var uQ = allUsers.Where(x => x.BirthDate.Year == year).OrderBy(y => y.Name)
+            //    .Select(z => new { Name = z.Name, Birthdate = z.BirthDate });
 
             if (userQuery.Any())
             {

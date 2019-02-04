@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TodoApi.Models;
 
 namespace TodoApi.Migrations
 {
     [DbContext(typeof(TodoContext))]
-    partial class TodoContextModelSnapshot : ModelSnapshot
+    [Migration("20190204132057_druga")]
+    partial class druga
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -30,23 +32,6 @@ namespace TodoApi.Migrations
                     b.HasKey("CId");
 
                     b.ToTable("Courseses");
-
-                    b.HasData(
-                        new
-                        {
-                            CId = 1,
-                            CName = "PHP"
-                        },
-                        new
-                        {
-                            CId = 2,
-                            CName = "Java"
-                        },
-                        new
-                        {
-                            CId = 3,
-                            CName = "C#"
-                        });
                 });
 
             modelBuilder.Entity("TodoApi.Models.Job", b =>
@@ -179,26 +164,6 @@ namespace TodoApi.Migrations
                     b.HasIndex("CId");
 
                     b.ToTable("Professorses");
-
-                    b.HasData(
-                        new
-                        {
-                            PId = 1,
-                            CId = 1,
-                            PName = "Kasimir Cannon"
-                        },
-                        new
-                        {
-                            PId = 2,
-                            CId = 2,
-                            PName = "Ria Sims"
-                        },
-                        new
-                        {
-                            PId = 3,
-                            CId = 3,
-                            PName = "Regina Hess"
-                        });
                 });
 
             modelBuilder.Entity("TodoApi.Models.StudentCourse", b =>
@@ -212,33 +177,6 @@ namespace TodoApi.Migrations
                     b.HasIndex("CId");
 
                     b.ToTable("StudentCourses");
-
-                    b.HasData(
-                        new
-                        {
-                            SId = 1,
-                            CId = 2
-                        },
-                        new
-                        {
-                            SId = 2,
-                            CId = 3
-                        },
-                        new
-                        {
-                            SId = 3,
-                            CId = 1
-                        },
-                        new
-                        {
-                            SId = 4,
-                            CId = 3
-                        },
-                        new
-                        {
-                            SId = 4,
-                            CId = 2
-                        });
                 });
 
             modelBuilder.Entity("TodoApi.Models.Students", b =>
@@ -252,28 +190,6 @@ namespace TodoApi.Migrations
                     b.HasKey("SId");
 
                     b.ToTable("Students");
-
-                    b.HasData(
-                        new
-                        {
-                            SId = 1,
-                            SName = "Zeus Randolph"
-                        },
-                        new
-                        {
-                            SId = 2,
-                            SName = "Andrej Bojic"
-                        },
-                        new
-                        {
-                            SId = 3,
-                            SName = "John Peters"
-                        },
-                        new
-                        {
-                            SId = 4,
-                            SName = "John Doe"
-                        });
                 });
 
             modelBuilder.Entity("TodoApi.Models.User", b =>

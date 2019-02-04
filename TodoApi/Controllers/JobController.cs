@@ -14,7 +14,7 @@ namespace TodoApi.Controllers
     {
         private static TodoContext _context;
 
-        /*
+        
         public JobController(TodoContext context)
         {
             context.Database.EnsureCreated();
@@ -23,19 +23,18 @@ namespace TodoApi.Controllers
         }
 
         // GET: api/<controller>
-        [HttpGet("GetBySector")]
-        public IActionResult GetBySector(string sector)
+        [HttpGet("GetAll")]
+        public IActionResult GetAll()
         {
-            var allJobs = _context.Job;
+            var allJobs = _context.Job.ToList();
 
-            var sectorQuery =
-                from job in allJobs
-                where job.Sector == sector
-                select job;
-
-            return Ok(sectorQuery.ToList());
+            return Ok(allJobs.ToList());
 
         }
-        */
+
+        public static async Task AddJob([FromBody]Job job)
+        {
+
+        }
     }
 }
