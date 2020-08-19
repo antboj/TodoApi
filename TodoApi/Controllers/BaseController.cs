@@ -15,6 +15,7 @@ namespace TodoApi.Controllers
         [HttpGet("Compare/{param1}/{param2}")]
         public virtual bool Compare(T param1, T param2)
         {
+            var rip = false;
             return param1.Equals(param2);
         }
 
